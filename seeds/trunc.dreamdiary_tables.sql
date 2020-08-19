@@ -1,0 +1,4 @@
+TRUNCATE
+  users,
+  dreams
+  RESTART IDENTITY CASCADE;

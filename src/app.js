@@ -5,6 +5,8 @@ const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
 const logger = require('./logger');
+const dreamRouter = require('./dreams/dreams-router')
+const usersRouter = require('./users/users-router')
 
 const app = express()
 
@@ -28,8 +30,11 @@ app.use(function validateBearerToken(req, res, next) {
   next();
 });
 
-app.get('/', (req, res) => {
-   res.send('Hello, world!')
+app.use('/api/dreams', dreamRouter)
+app.use('/api/users', usersRouter)
+//app.use('/api/auth', authRouter)
+app.get('/*', (req, res) => {
+   res.send('Route note found')
 })
 
 app.use(function errorHandler(error, req, res, next) {
