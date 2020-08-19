@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const xss = require('xss');
 const DreamsService = require('./dreams-service');
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const dreamRouter = express.Router();
 const jsonParser = express.json();
@@ -17,6 +18,7 @@ const serializeDream = dream => ({
 
 dreamRouter
     .route('/')
+    .all(requireAuth)
     .get( (req, res, next) => {
         const knexInstance = req.app.get('db');
         DreamsService.getAllDreams(knexInstance)
@@ -58,6 +60,7 @@ dreamRouter
 
 dreamRouter
     .route('/:dream_id')
+    .all(requireAuth)
     .get( (req, res, next) => {
         DreamsService.getById(
             req.app.get('db'),
@@ -73,9 +76,33 @@ dreamRouter
             })
             .catch(next);
     })
+    .patch( jsonParser, (req, res, next) => {
+        const { title, date_created, content, notes } = req.body;
+        const updatedDream = { title, date_created, content, notes }
+
+        const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length
+            if(numberOfValues === 0) {
+            return res.status(400).json({
+                error: {
+                message: `Request body must contain either 'title', 'date_created', 'content' or 'notes'`
+                }
+            })
+        }
+
+        DreamsService.updateDream(
+            req.app.get('db'),
+            req.params.dream_id,
+            updatedDream
+        )
+          .then(numRowsAffected => {
+            res.status(204).end()
+          })
+          .catch(next)
+    })
 
 dreamRouter
     .route('/byUserId/:user_id')
+    .all(requireAuth)
     .get( (req, res, next) => {
         DreamsService.getByUserId(
             req.app.get('db'),
