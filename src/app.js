@@ -32,7 +32,7 @@ app.use(function validateBearerToken(req, res, next) {
 
 app.use('/api/dreams', dreamRouter)
 app.use('/api/users', usersRouter)
-//app.use('/api/auth', authRouter)
+app.use('/api/auth', authRouter)
 app.get('/*', (req, res) => {
    res.send('Route note found')
 })
