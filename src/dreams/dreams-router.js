@@ -13,6 +13,7 @@ const serializeDream = dream => ({
     date_created: dream.date_created,
     content: xss(dream.content),
     notes: xss(dream.notes),
+    archived: dream.archived,
     user_id: dream.user_id
 });
 
@@ -77,14 +78,14 @@ dreamRouter
             .catch(next);
     })
     .patch( jsonParser, (req, res, next) => {
-        const { title, date_created, content, notes } = req.body;
-        const updatedDream = { title, date_created, content, notes }
+        const { title, date_created, content, notes, archived } = req.body;
+        const updatedDream = { title, date_created, content, notes, archived }
 
-        const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length
+        const numberOfValues = Object.values(updatedDream).filter(Boolean).length
             if(numberOfValues === 0) {
             return res.status(400).json({
                 error: {
-                message: `Request body must contain either 'title', 'date_created', 'content' or 'notes'`
+                message: `Request body must contain either 'title', 'date_created', 'content', 'notes' or 'archived'`
                 }
             })
         }

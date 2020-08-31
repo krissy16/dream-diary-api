@@ -22,7 +22,8 @@ const DreamsService = {
         return knex
           .select('*')
           .from('dreams')
-          .where('user_id', id);
+          .where('user_id', id)
+          .orderBy('date_created', 'desc');
     },
     deleteDream(knex, id) {
         return knex('dreams')
