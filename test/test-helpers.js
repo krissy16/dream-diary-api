@@ -72,11 +72,7 @@ function makeExpectedDream(users, dream){
         date_created: dream.date_created,
         notes: dream.notes,
         archived: dream.archived,
-        user: {
-            id: user.id,
-            email: user.email,
-            password: user.password
-        }
+        user_id: dream.user_id
     }
 }
 
@@ -116,13 +112,19 @@ function cleanTables(db){
     )
 }
 
+function seedUserTable(db, users){
+    return db
+        .into('users')
+        .insert(users)
+}
+
 function seedDreamsTables(db, users, dreams){
     return db
         .into('users')
         .insert(users)
         .then(() => 
             db  
-                .into(dreams)
+                .into('dreams')
                 .insert(dreams)
         )
 }
@@ -139,7 +141,7 @@ function seedMaliciousDream(db, user, dream){
 }
 
 function makeAuthToken(){  
-    const dbUser = makeUsersArray()[0]
+    const dbUser = makeUsersArray()[1]
     const sub = dbUser.email
     const payload = { user_id: dbUser.id }
 
@@ -154,6 +156,7 @@ module.exports = {
     makeDreamsFixtures,
     makeAuthToken,
     cleanTables,
+    seedUserTable,
     seedDreamsTables,
     seedMaliciousDream
 }
