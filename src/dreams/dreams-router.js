@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const xss = require('xss');
 const DreamsService = require('./dreams-service');
-const { requireAuth } = require('../middleware/jwt-auth')
+const { requireAuth } = require('../middleware/jwt-auth');
 
 const dreamRouter = express.Router();
 const jsonParser = express.json();
@@ -30,20 +30,20 @@ dreamRouter
     })
     .post(jsonParser, (req, res, next) => {
         const { title, date_created, content, notes } = req.body;
-        const newDream = { title, date_created, content, notes }
+        const newDream = { title, date_created, content, notes };
 
         if(!title){
             return res.status(400).json({
                 error: `Missing title in request body`
-            })
+            });
         }
         if(!content){
             return res.status(400).json({
                 error: `Missing dream content in request body`
-            })
+            });
         }
 
-        newDream.user_id = req.user.id
+        newDream.user_id = req.user.id;
 
         DreamsService.insertDream(
             req.app.get('db'),
@@ -79,15 +79,15 @@ dreamRouter
     })
     .patch( jsonParser, (req, res, next) => {
         const { title, date_created, content, notes, archived } = req.body;
-        const updatedDream = { title, date_created, content, notes, archived }
+        const updatedDream = { title, date_created, content, notes, archived };
 
-        const numberOfValues = Object.values(updatedDream).filter(Boolean).length
+        const numberOfValues = Object.values(updatedDream).filter(Boolean).length;
             if(numberOfValues === 0) {
             return res.status(400).json({
                 error: {
                 message: `Request body must contain either 'title', 'date_created', 'content', 'notes' or 'archived'`
                 }
-            })
+            });
         }
 
         DreamsService.updateDream(
@@ -98,8 +98,8 @@ dreamRouter
           .then(numRowsAffected => {
             res.status(204).end()
           })
-          .catch(next)
-    })
+          .catch(next);
+    });
 
 dreamRouter
     .route('/byUserId/:user_id')
@@ -119,7 +119,7 @@ dreamRouter
                 res.json(dreams.map(serializeDream));
             })
             .catch(next);
-    })
+    });
 
 
 module.exports = dreamRouter;

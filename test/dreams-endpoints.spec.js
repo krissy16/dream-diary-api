@@ -1,24 +1,24 @@
-const knex = require('knex')
-const app = require('../src/app')
-const helpers = require('./test-helpers')
-const supertest = require('supertest')
+const knex = require('knex');
+const app = require('../src/app');
+const helpers = require('./test-helpers');
+const supertest = require('supertest');
 
 describe('Dreams Endpoints', () => {
-  let db
+  let db;
 
   const {
     testUsers,
     testDreams,
-  } = helpers.makeDreamsFixtures()
+  } = helpers.makeDreamsFixtures();
 
-  const authToken = helpers.makeAuthToken()
+  const authToken = helpers.makeAuthToken();
 
   before('make knex instance', () => {
     db = knex({
       client: 'pg',
       connection: process.env.TEST_DATABASE_URL,
-    })
-    app.set('db', db)
+    });
+    app.set('db', db);
   })
 
   after('disconnect from db', () => db.destroy())
@@ -40,7 +40,7 @@ describe('Dreams Endpoints', () => {
         return supertest(app)
           .get('/api/dreams')
           .set('Authorization', `Bearer ${authToken}`)
-          .expect(200, [])
+          .expect(200, []);
       })
     })
 
@@ -59,7 +59,7 @@ describe('Dreams Endpoints', () => {
             testUsers,
             dream
           )
-        )
+        );
         return supertest(app)
             .get('/api/dreams')
             .set('Authorization', `Bearer ${authToken}`)
@@ -69,8 +69,8 @@ describe('Dreams Endpoints', () => {
     })
 
     context(`Given an XSS attack dream`, () => {
-      const testUser = helpers.makeUsersArray()[1]
-      const { maliciousDream, expectedDream } = helpers.makeMaliciousDream(testUser)
+      const testUser = helpers.makeUsersArray()[1];
+      const { maliciousDream, expectedDream } = helpers.makeMaliciousDream(testUser);
 
       beforeEach('insert malicious dream', () => {
         helpers.seedMaliciousDream(
@@ -88,7 +88,7 @@ describe('Dreams Endpoints', () => {
           .expect(res => {
             expect(res.body[0].title).to.eql(expectedDream.title)
             expect(res.body[0].content).to.eql(expectedDream.content)
-          })
+          });
       })
     })
   })
@@ -106,7 +106,7 @@ describe('Dreams Endpoints', () => {
         title: 'Test title',
         content: 'test content',
         user_id: 1
-      }
+      };
       return supertest(app)
         .post('/api/dreams')
         .set('Authorization', `Bearer ${authToken}`)
@@ -122,7 +122,7 @@ describe('Dreams Endpoints', () => {
             .set('Authorization', `Bearer ${authToken}`)
             .expect(res.body)
         )
-    })
+    });
   })
 
   describe(`GET /api/dreams/:dream_id`, () => {
@@ -135,11 +135,11 @@ describe('Dreams Endpoints', () => {
       )
 
       it(`responds with 404`, () => {
-        const dreamId = 123456
+        const dreamId = 123456;
         return supertest(app)
           .get(`/api/dreams/${dreamId}`)
           .set('Authorization', `Bearer ${authToken}`)
-          .expect(404, { error: {message: `Dream doesn't exist`} })
+          .expect(404, { error: {message: `Dream doesn't exist`} });
       })
     })
 
@@ -153,29 +153,29 @@ describe('Dreams Endpoints', () => {
       )
 
       it('responds with 200 and the specified dream', () => {
-        const dreamId = 2
+        const dreamId = 2;
         const expectedDream = helpers.makeExpectedDream(
           testUsers,
           testDreams[dreamId - 1],
-        )
+        );
 
         return supertest(app)
           .get(`/api/dreams/${dreamId}`)
           .set('Authorization', `Bearer ${authToken}`)
-          .expect(200, expectedDream)
+          .expect(200, expectedDream);
       })
     })
 
     context.skip(`Given an XSS attack dream`, () => {
-      const testUser = helpers.makeUsersArray()[1]
-      const { maliciousDream, expectedDream } = helpers.makeMaliciousDream(testUser)
+      const testUser = helpers.makeUsersArray()[1];
+      const { maliciousDream, expectedDream } = helpers.makeMaliciousDream(testUser);
 
       beforeEach('insert malicious dream', () => {
         return helpers.seedMaliciousDream(
           db,
           testUser,
           maliciousDream,
-        )
+        );
       })
 
       it('removes XSS attack content', () => {
@@ -186,7 +186,7 @@ describe('Dreams Endpoints', () => {
           .expect(res => {
             expect(res.body[0].title).to.eql(expectedDream.title)
             expect(res.body[0].content).to.eql(expectedDream.content)
-          })
+          });
       })
     })
   })
@@ -205,7 +205,7 @@ describe('Dreams Endpoints', () => {
         id: 1,
         title: 'Test title edited',
         content: 'test content'
-      }
+      };
       return supertest(app)
         .patch(`/api/dreams/${editedDream.id}`)
         .set('Authorization', `Bearer ${authToken}`)
@@ -216,7 +216,7 @@ describe('Dreams Endpoints', () => {
             .get(`/api/dreams/${editedDream.id}`)
             .set('Authorization', `Bearer ${authToken}`)
             .expect(res.body.id).to.eql(editedDream.id)
-        )
+        );
     })
   })
 
@@ -231,16 +231,16 @@ describe('Dreams Endpoints', () => {
       )
 
       it('responds with 200 and the specified dreams', () => {
-        const userId = 2
+        const userId = 2;
         const expectedDream = helpers.makeExpectedDream(
           testUsers,
           testDreams[2],
-        )
+        );
 
         return supertest(app)
           .get(`/api/dreams/byUserId/${userId}`)
           .set('Authorization', `Bearer ${authToken}`)
-          .expect(200, [expectedDream])
+          .expect(200, [expectedDream]);
       })
     })
   })

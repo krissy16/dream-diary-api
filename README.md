@@ -1,26 +1,45 @@
-# Express Boilerplate!
+# Dream Diary
+Dream Diary is a responsive web app that allows users to record their dreams and notes on those dreams.
 
-This is a boilerplate project used for starting new projects!
+## Screeshots
+Landing Page: 
+![Landing Page](./project-screenshots/landing-page.png?raw=true)
 
-## Set up
+Login Page: 
+![Login Page](./project-screenshots/login-page.png?raw=true)
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+Register Page:
+![Register Page](./project-screenshots/register-page.png?raw=true)
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+Home Page:
+![Home Page](./project-screenshots/home-page.png?raw=true)
 
-## Scripts
+Edit Page:
+![Edit Page](./project-screenshots/edit-page.png?raw=true)
 
-Start the application `npm start`
+New Dream Page:
+![New Dream Page](./project-screenshots/new-dream-page.png?raw=true)
 
-Start nodemon for the application `npm run dev`
+## Live App
+- https://dream-diary.vercel.app/
 
-Run the tests `npm test`
+## Technologies Used
+- React
+- Html
+- CSS
+- Javascript
+- Node.js
+- PostgreSQL
+- Javascript
+- Express
 
-## Deploying
-
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+## API Documentation
+All requests require a valid json web token from a registered user and the content-type of application/json. 
+- Base URL: https://dream-diary.herokuapp.com
+    - GET All Dreams: /api/dreams
+    - GET Dream By Id: /api/dreams/:dream_id
+    - GET Dreams for a User: /api/dreams/byUserId/:user_id
+    - Patch Dream By Id: /api/dreams/:dream_id
+    - POST a dream: /api/dreams
+    - POST to login a user: /api/auth/login    
+    - POST a new user: /api/users/
