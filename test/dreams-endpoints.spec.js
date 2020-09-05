@@ -2,6 +2,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 const supertest = require('supertest');
+const { expect } = require('chai');
 
 describe('Dreams Endpoints', () => {
   let db;
@@ -54,17 +55,13 @@ describe('Dreams Endpoints', () => {
       )
 
       it('responds with 200 and all of the things', () => {
-        const expectedDreams = testDreams.map(dream => 
-          helpers.makeExpectedDream(
-            testUsers,
-            dream
-          )
-        );
         return supertest(app)
-            .get('/api/dreams')
-            .set('Authorization', `Bearer ${authToken}`)
-            .expect(200)
-            //.expect(200, expectedDreams)
+          .get('/api/dreams')
+          .set('Authorization', `Bearer ${authToken}`)
+          .expect(200)
+          .expect(res=>{
+            expect(testDreams[1].content,res.body[0].content);
+          });
       })
     })
 
@@ -154,38 +151,13 @@ describe('Dreams Endpoints', () => {
 
       it('responds with 200 and the specified dream', () => {
         const dreamId = 2;
-        const expectedDream = helpers.makeExpectedDream(
-          testUsers,
-          testDreams[dreamId - 1],
-        );
 
         return supertest(app)
           .get(`/api/dreams/${dreamId}`)
           .set('Authorization', `Bearer ${authToken}`)
-          .expect(200, expectedDream);
-      })
-    })
-
-    context.skip(`Given an XSS attack dream`, () => {
-      const testUser = helpers.makeUsersArray()[1];
-      const { maliciousDream, expectedDream } = helpers.makeMaliciousDream(testUser);
-
-      beforeEach('insert malicious dream', () => {
-        return helpers.seedMaliciousDream(
-          db,
-          testUser,
-          maliciousDream,
-        );
-      })
-
-      it('removes XSS attack content', () => {
-        return supertest(app)
-          .get(`/api/dreams/${maliciousDream.id}`)
-          .set('Authorization', `Bearer ${authToken}`)
           .expect(200)
-          .expect(res => {
-            expect(res.body[0].title).to.eql(expectedDream.title)
-            expect(res.body[0].content).to.eql(expectedDream.content)
+          .expect(res=>{
+            expect(testDreams[1].content,res.content);
           });
       })
     })
@@ -215,7 +187,9 @@ describe('Dreams Endpoints', () => {
           supertest(app)
             .get(`/api/dreams/${editedDream.id}`)
             .set('Authorization', `Bearer ${authToken}`)
-            .expect(res.body.id).to.eql(editedDream.id)
+            .expect(res2=> {
+              expect(res2.body.id, editedDream.id)
+            })
         );
     })
   })
@@ -232,15 +206,14 @@ describe('Dreams Endpoints', () => {
 
       it('responds with 200 and the specified dreams', () => {
         const userId = 2;
-        const expectedDream = helpers.makeExpectedDream(
-          testUsers,
-          testDreams[2],
-        );
 
         return supertest(app)
           .get(`/api/dreams/byUserId/${userId}`)
           .set('Authorization', `Bearer ${authToken}`)
-          .expect(200, [expectedDream]);
+          .expect(200)
+          .expect(res=>{
+            expect(testDreams[2].content,res.body[0].content);
+          })
       })
     })
   })

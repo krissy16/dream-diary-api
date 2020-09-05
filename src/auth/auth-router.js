@@ -2,8 +2,12 @@ const express = require('express');
 const AuthService = require('./auth-service');
 const jsonBodyParser = express.json();
 const authRouter = express.Router();
+const {requireAuth} = require('../middleware/jwt-auth');
 
 authRouter
+.get('/', requireAuth, jsonBodyParser, (req,res,next)=>{
+    res.json(req.user);
+})
 .post('/login', jsonBodyParser, (req, res, next) => {
     const { email, password } = req.body;
     const loginUser = { email, password };

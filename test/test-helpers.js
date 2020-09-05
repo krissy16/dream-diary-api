@@ -5,7 +5,7 @@ function makeUsersArray(){
         {
             id: 1,
             email: 'testuser1@email.com',
-            password: 'password'
+            password: 'P@ssword1234'
         },
         {
             id: 2,
